@@ -28,9 +28,11 @@ while True:
   if con:
    con.close()
  mylcd.lcd_clear()
+ mylcd.backlight(1)
  mylcd.lcd_display_string("Status modemu GSM", 1)
  mylcd.lcd_display_string("Siec: %s" %siec, 2)
  mylcd.lcd_display_string("Sygnal: -%s" %sygnal, 3)
  mylcd.lcd_display_string("ID: %s" %nadajnik, 4)
  time.sleep(20)
+ mylcd.backlight(0)
  mylcd.lcd_clear()
