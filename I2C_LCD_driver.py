@@ -7,14 +7,12 @@
 """
 Compiled, mashed and generally mutilated 2014-2015 by Denis Pleic
 Made available under GNU GENERAL PUBLIC LICENSE
-
 # Modified Python I2C library for Raspberry Pi
 # as found on http://www.recantha.co.uk/blog/?p=4849
 # Joined existing 'i2c_lib.py' and 'lcddriver.py' into a single library
 # added bits and pieces from various sources
 # By DenisFromHR (Denis Pleic)
 # 2015-02-10, ver 0.1
-
 """
 
 # i2c bus (0 -- original Pi, 1 -- Rev 2 Pi)
@@ -30,7 +28,6 @@ class i2c_device:
    def __init__(self, addr, port=I2CBUS):
       self.addr = addr
       self.bus = smbus.SMBus(port)
-
 # Write a single command
    def write_cmd(self, cmd):
       self.bus.write_byte(self.addr, cmd)
@@ -82,7 +79,6 @@ LCD_CURSORON = 0x02
 LCD_CURSOROFF = 0x00
 LCD_BLINKON = 0x01
 LCD_BLINKOFF = 0x00
-
 # flags for display/cursor shift
 LCD_DISPLAYMOVE = 0x08
 LCD_CURSORMOVE = 0x00
@@ -100,6 +96,8 @@ LCD_5x8DOTS = 0x00
 # flags for backlight control
 LCD_BACKLIGHT = 0x08
 LCD_NOBACKLIGHT = 0x00
+LCD_NOC = 1
+LCD_BACKLIGHT_MODE = 0
 
 En = 0b00000100 # Enable bit
 Rw = 0b00000010 # Read/Write bit
@@ -124,15 +122,22 @@ class lcd:
 
    # clocks EN to latch command
    def lcd_strobe(self, data):
-      self.lcd_device.write_cmd(data | En | LCD_NOBACKLIGHT)
+      if LCD_NOC == 0:
+       LCD_BACKLIGHT_MODE = LCD_BACKLIGHT
+      elif LCD_NOC == 1:
+       LCD_BACKLIGHT_MODE = LCD_NOBACKLIGHT
+      self.lcd_device.write_cmd(data | En | LCD_BACKLIGHT_MODE)
       sleep(.0005)
-      self.lcd_device.write_cmd(((data & ~En) | LCD_NOBACKLIGHT))
+      self.lcd_device.write_cmd(((data & ~En) | LCD_BACKLIGHT_MODE))
       sleep(.0001)
 
    def lcd_write_four_bits(self, data):
-      self.lcd_device.write_cmd(data | LCD_NOBACKLIGHT)
+      if LCD_NOC == 0:
+       LCD_BACKLIGHT_MODE = LCD_BACKLIGHT
+      elif LCD_NOC == 1:
+       LCD_BACKLIGHT_MODE = LCD_NOBACKLIGHT
+      self.lcd_device.write_cmd(data | LCD_BACKLIGHT_MODE)
       self.lcd_strobe(data)
-
    # write a command to lcd
    def lcd_write(self, cmd, mode=0):
       self.lcd_write_four_bits(mode | (cmd & 0xF0))
