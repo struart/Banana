@@ -27,12 +27,28 @@ while True:
  finally:
   if con:
    con.close()
+
+#sprawdz ktora godzina 
+
+
  mylcd.lcd_clear()
- mylcd.backlight(1)
+
+#jesli nie noc to 
+# stan = 1 
+#else 
+# stan = 0
+#
+#mylcd.backlight(stan) 
  mylcd.lcd_display_string("Status modemu GSM", 1)
  mylcd.lcd_display_string("Siec: %s" %siec, 2)
  mylcd.lcd_display_string("Sygnal: -%s" %sygnal, 3)
  mylcd.lcd_display_string("ID: %s" %nadajnik, 4)
+ 
  time.sleep(20)
- mylcd.backlight(0)
+ 
+ #jesli noc i stan == 1 
+ # stan = 0
+ #mylcd.backlight(stan)
+ 
+
  mylcd.lcd_clear()
